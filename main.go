@@ -50,7 +50,16 @@ func (qb *QueryBuilder) Join(join string, params ...interface{}) *QueryBuilder {
 
 func (qb *QueryBuilder) Where(condition string, params ...interface{}) *QueryBuilder {
 	qb.where = append(qb.where, condition)
-	qb.params = append(qb.params, params...)
+	for _, param := range params {
+		switch v := param.(type) {
+		case []int:
+			for _, item := range v {
+				qb.params = append(qb.params, item)
+			}
+		default:
+			qb.params = append(qb.params, param)
+		}
+	}
 	return qb
 }
 
